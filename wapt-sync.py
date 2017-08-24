@@ -3,15 +3,21 @@
 
 import waptpackage
 
+repos = {
+  'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
+  'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
+}
+
 def get_local_repo():
   repo = waptpackage.WaptLocalRepo()
   repo._load_packages_index()
   return repo
 
-def get_remote_repo():
-  repo = waptpackage.WaptRemoteRepo(name='tqit',url='https://wapt.tranquil.it/wapt',timeout=4)
-  repo.verify_cert = True
-  return repo
+def get_remote_repos():
+  for name, r in repos.items():
+    r['repo'] = waptpackage.WaptRemoteRepo(name=name, url=r['url'], timeout=4)
+    r['repo'].verify_cert = True
+  return repos
 
 def check_new_packages(local, remote):
   localDate = local.is_available()
@@ -52,13 +58,15 @@ def update_local(local, remote):
 
 def run():
   local = get_local_repo()
-  remote = get_remote_repo()
-  if check_new_packages(local, remote):
-    print 'Scan remote Packages for updates'
-    update_local(local, remote)
-    print 'Done'
-  else:
-    print 'Nothing to do'
+  remotes = get_remote_repos()
+  for name, remote in remotes.items():
+    print 'Remote', name, remote['url']
+    if check_new_packages(local, remote['repo']):
+      print 'Scan remote Packages for updates'
+      update_local(local, remote['repo'])
+      print 'Done'
+    else:
+      print 'Nothing to do'
   local.update_packages_index()
 
 if __name__ == '__main__':

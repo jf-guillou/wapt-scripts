@@ -4,19 +4,27 @@
 import waptpackage
 from argparse import ArgumentParser
 
+repos = {
+  'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
+  'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
+}
+
 def get_local_repo():
   repo = waptpackage.WaptLocalRepo()
   repo._load_packages_index()
   return repo
 
-def get_remote_repo():
-  repo = waptpackage.WaptRemoteRepo(name='tqit',url='https://wapt.tranquil.it/wapt',timeout=4)
-  repo.verify_cert = True
-  return repo
+def get_remote_repos():
+  for name, r in repos.items():
+    r['repo'] = waptpackage.WaptRemoteRepo(name=name, url=r['url'], timeout=4)
+    r['repo'].verify_cert = True
+  return repos
 
-def search_package(remote, name):
+def search_package(remotes, name):
   print 'Searching for', name
-  packages = remote.search(name, None, True)
+  packages = []
+  for _, r in remotes.items():
+    packages.extend(r['repo'].search(name, None, True))
   if not len(packages):
     return None
   return packages
@@ -48,10 +56,10 @@ def run():
     parser.print_help()
     return
 
-  remote = get_remote_repo()
+  remotes = get_remote_repos()
   local = get_local_repo()
   for packageName in args.name:
-    packages = search_package(remote, packageName)
+    packages = search_package(remotes, packageName)
     if not packages:
       print 'No results for', packageName
       continue
@@ -59,7 +67,7 @@ def run():
     if not p:
       print 'Invalid choice, skipping', packageName
       continue
-    add_package(remote, local, p)
+    add_package(remotes[p['repo']]['repo'], local, p)
 
 if __name__ == '__main__':
   run()
