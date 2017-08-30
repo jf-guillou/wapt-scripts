@@ -20,11 +20,11 @@ def get_remote_repos():
     r['repo'].verify_cert = True
   return repos
 
-def search_package(remotes, name):
+def search_package(remotes, name, new_only):
   print 'Searching for', name
   packages = []
   for _, r in remotes.items():
-    packages.extend(r['repo'].search(name, None, True))
+    packages.extend(r['repo'].search(name, None, new_only))
   if not len(packages):
     return None
   return packages
@@ -44,13 +44,14 @@ def add_package(remote, local, p):
   if not p.package:
     return
   print 'Downloading', p.package, p.version
-  remote.download_packages(p.package, local.localpath)
+  remote.download_packages(p, local.localpath)
   local.update_packages_index()
   print 'Added', p.package, 'to local repository'
 
 def run():
   parser = ArgumentParser()
   parser.add_argument('name', metavar='name', nargs='+', help='Package name')
+  parser.add_argument('-a', dest='allversions', action='store_true', help='Display all versions')
   args = parser.parse_args()
   if not args.name:
     parser.print_help()
@@ -59,7 +60,7 @@ def run():
   remotes = get_remote_repos()
   local = get_local_repo()
   for packageName in args.name:
-    packages = search_package(remotes, packageName)
+    packages = search_package(remotes, packageName, not args.allversions)
     if not packages:
       print 'No results for', packageName
       continue
