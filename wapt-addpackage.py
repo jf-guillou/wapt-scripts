@@ -19,8 +19,12 @@ def pick_package(packages):
     print('Matching packages:')
     for (i, pack) in enumerate(packages, start=1):
         print('%s %s %s' % (i, pack.package, pack.version))
-    idx = input('Pick package: ')
-    if not isinstance(idx, int):
+    idx_input = raw_input('Pick package: ')
+    if not idx_input:
+        return None
+    try:
+        idx = int(idx_input)
+    except ValueError:
         return None
     if idx < 1 or idx > len(packages):
         return None
