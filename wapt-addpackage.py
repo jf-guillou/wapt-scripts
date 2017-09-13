@@ -1,74 +1,80 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import waptpackage
 from argparse import ArgumentParser
+import waptpackage
 
-repos = {
-  'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
-  'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
+REPOS = {
+    'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
+    'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
 }
 
 def get_local_repo():
-  repo = waptpackage.WaptLocalRepo()
-  repo._load_packages_index()
-  return repo
+    """Get local package repository and load index"""
+    repo = waptpackage.WaptLocalRepo()
+    repo.update()
+    return repo
 
 def get_remote_repos():
-  for name, r in repos.items():
-    r['repo'] = waptpackage.WaptRemoteRepo(name=name, url=r['url'], timeout=4)
-    r['repo'].verify_cert = True
-  return repos
+    """Get remote package repositories and init connection"""
+    for name, rep in REPOS.items():
+        rep['repo'] = waptpackage.WaptRemoteRepo(name=name, url=rep['url'], timeout=4)
+        rep['repo'].verify_cert = True
+    return REPOS
 
 def search_package(remotes, name, new_only):
-  print 'Searching for', name
-  packages = []
-  for _, r in remotes.items():
-    packages.extend(r['repo'].search(name, None, new_only))
-  if not len(packages):
-    return None
-  return packages
+    """Search for package name in remote repository"""
+    print('Searching for %s' % name)
+    packages = []
+    for _, rep in remotes.items():
+        packages.extend(rep['repo'].search(name, None, new_only))
+    if not packages:
+        return None
+    return packages
 
 def pick_package(packages):
-  print 'Matching packages:'
-  for (i, p) in enumerate(packages, start=1):
-    print i, p.package, p.version
-  idx = input('Pick package: ')
-  if not isinstance(idx, int):
-    return None
-  if idx < 1 or idx > len(packages):
-    return None
-  return list(packages)[idx-1]
+    """List matching packages and wait for user to pick one"""
+    print('Matching packages:')
+    for (i, pack) in enumerate(packages, start=1):
+        print('%s %s %s' % (i, pack.package, pack.version))
+    idx = input('Pick package: ')
+    if not isinstance(idx, int):
+        return None
+    if idx < 1 or idx > len(packages):
+        return None
+    return list(packages)[idx-1]
 
-def add_package(remote, local, p):
-  if not p.package:
-    return
-  print 'Downloading', p.package, p.version
-  remote.download_packages(p, local.localpath)
-  local.update_packages_index()
-  print 'Added', p.package, 'to local repository'
+def add_package(remote, local, pack):
+    """Add remote package to local repository"""
+    if not pack.package:
+        return
+    print('Downloading %s %s' % (pack.package, pack.version))
+    remote.download_packages(pack, local.localpath)
+    local.update_packages_index()
+    print('Added %s to local repository' % pack.package)
 
 def run():
-  parser = ArgumentParser()
-  parser.add_argument('name', metavar='name', nargs='+', help='Package name')
-  parser.add_argument('-a', dest='allversions', action='store_true', help='Display all versions')
-  args = parser.parse_args()
-  if not args.name:
-    parser.print_help()
-    return
+    """Parse arguments, fetch a list a matching packages from remote repo and install if picked"""
+    parser = ArgumentParser()
+    parser.add_argument('name', metavar='name', nargs='+', help='Package name')
+    parser.add_argument('-a', dest='allversions', action='store_true', help='Display all versions')
+    args = parser.parse_args()
+    if not args.name:
+        parser.print_help()
+        return
 
-  remotes = get_remote_repos()
-  local = get_local_repo()
-  for packageName in args.name:
-    packages = search_package(remotes, packageName, not args.allversions)
-    if not packages:
-      print 'No results for', packageName
-      continue
-    p = pick_package(packages)
-    if not p:
-      print 'Invalid choice, skipping', packageName
-      continue
-    add_package(remotes[p['repo']]['repo'], local, p)
+    remotes = get_remote_repos()
+    local = get_local_repo()
+    for package_name in args.name:
+        packages = search_package(remotes, package_name, not args.allversions)
+        if not packages:
+            print('No results for %s' % package_name)
+            continue
+        pack = pick_package(packages)
+        if not pack:
+            print('Invalid choice, skipping %s' % package_name)
+            continue
+        add_package(remotes[pack['repo']]['repo'], local, pack)
 
 if __name__ == '__main__':
-  run()
+    run()
