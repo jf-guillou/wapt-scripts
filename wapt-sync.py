@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import waptrepo
+import waptpackagechecker
 
 def check_new_packages(local, remote):
     """Check remote repository for updates"""
@@ -40,8 +41,29 @@ def update_local(local, remote):
 
         print('Found %s %s' % (r_pack.package, r_pack.version))
         if r_pack > l_pack:
-            print('%s %s - newer version : %s' % (l_pack.package, l_pack.version, r_pack.version))
-            remote.download_packages(l_pack.package, local.localpath)
+            print('Newer version %s %s - %s' % (l_pack.package, l_pack.version, r_pack.version))
+            add_package(remote, local, r_pack)
+
+def add_package(remote, local, pack):
+    """Add remote package to local repository"""
+    if not pack.package:
+        return
+    print('Downloading %s %s' % (pack.package, pack.version))
+    res = remote.download_packages(pack, local.localpath)
+    if res['errors']:
+        print('Download failure')
+        return False
+
+    path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
+    if not path:
+        print('Package path not found')
+        return False
+
+    if not waptpackagechecker.check(path):
+        return False
+
+    print('Added %s to local repository' % pack.package)
+    return True
 
 def run():
     """Loop through remote repositories and check for any package updates"""

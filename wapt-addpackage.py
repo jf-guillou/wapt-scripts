@@ -3,6 +3,7 @@
 
 from argparse import ArgumentParser
 import waptrepo
+import waptpackagechecker
 
 def search_package(remotes, name, new_only):
     """Search for package name in remote repository"""
@@ -22,12 +23,15 @@ def pick_package(packages):
     idx_input = raw_input('Pick package: ')
     if not idx_input:
         return None
+
     try:
         idx = int(idx_input)
     except ValueError:
         return None
+
     if idx < 1 or idx > len(packages):
         return None
+
     return list(packages)[idx-1]
 
 def add_package(remote, local, pack):
@@ -35,9 +39,22 @@ def add_package(remote, local, pack):
     if not pack.package:
         return
     print('Downloading %s %s' % (pack.package, pack.version))
-    remote.download_packages(pack, local.localpath)
+    res = remote.download_packages(pack, local.localpath)
+    if res['errors']:
+        print('Download failure')
+        return False
+
+    path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
+    if not path:
+        print('Package path not found')
+        return False
+
+    if not waptpackagechecker.check(path):
+        return False
+
     local.update_packages_index()
     print('Added %s to local repository' % pack.package)
+    return True
 
 def run():
     """Parse arguments, fetch a list a matching packages from remote repo and install if picked"""
