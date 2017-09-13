@@ -2,25 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
-import waptpackage
-
-REPOS = {
-    'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
-    'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
-}
-
-def get_local_repo():
-    """Get local package repository and load index"""
-    repo = waptpackage.WaptLocalRepo()
-    repo.update()
-    return repo
-
-def get_remote_repos():
-    """Get remote package repositories and init connection"""
-    for name, rep in REPOS.items():
-        rep['repo'] = waptpackage.WaptRemoteRepo(name=name, url=rep['url'], timeout=4)
-        rep['repo'].verify_cert = True
-    return REPOS
+import waptrepo
 
 def search_package(remotes, name, new_only):
     """Search for package name in remote repository"""
@@ -63,8 +45,8 @@ def run():
         parser.print_help()
         return
 
-    remotes = get_remote_repos()
-    local = get_local_repo()
+    remotes = waptrepo.get_remote_repos()
+    local = waptrepo.get_local_repo()
     for package_name in args.name:
         packages = search_package(remotes, package_name, not args.allversions)
         if not packages:

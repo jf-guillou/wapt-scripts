@@ -1,25 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import waptpackage
-
-REPOS = {
-    'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
-    'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
-}
-
-def get_local_repo():
-    """Get local package repository and load index"""
-    repo = waptpackage.WaptLocalRepo()
-    repo.update()
-    return repo
-
-def get_remote_repos():
-    """Get remote package repositories and init connection"""
-    for name, rep in REPOS.items():
-        rep['repo'] = waptpackage.WaptRemoteRepo(name=name, url=rep['url'], timeout=4)
-        rep['repo'].verify_cert = True
-    return REPOS
+import waptrepo
 
 def check_new_packages(local, remote):
     """Check remote repository for updates"""
@@ -63,8 +45,8 @@ def update_local(local, remote):
 
 def run():
     """Loop through remote repositories and check for any package updates"""
-    local = get_local_repo()
-    remotes = get_remote_repos()
+    local = waptrepo.get_local_repo()
+    remotes = waptrepo.get_remote_repos()
     for name, remote in remotes.items():
         print('Remote %s %s' % (name, remote['url']))
         if check_new_packages(local, remote['repo']):
