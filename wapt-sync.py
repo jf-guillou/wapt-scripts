@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import waptrepo
-import waptpackagechecker
 
 def check_new_packages(local, remote):
     """Check remote repository for updates"""
@@ -57,9 +56,6 @@ def add_package(remote, local, pack):
     path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
     if not path:
         print('Package path not found')
-        return False
-
-    if not waptpackagechecker.check(path):
         return False
 
     print('Added %s to local repository' % pack.package)

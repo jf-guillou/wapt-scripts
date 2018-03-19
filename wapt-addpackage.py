@@ -3,7 +3,6 @@
 
 from argparse import ArgumentParser
 import waptrepo
-import waptpackagechecker
 
 def search_package(remotes, name, new_only):
     """Search for package name in remote repository"""
@@ -47,9 +46,6 @@ def add_package(remote, local, pack):
     path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
     if not path:
         print('Package path not found')
-        return False
-
-    if not waptpackagechecker.check(path):
         return False
 
     local.update_packages_index()
