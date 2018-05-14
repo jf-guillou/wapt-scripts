@@ -40,11 +40,11 @@ def add_package(remote, local, pack):
     """Add remote package to local repository"""
     print('Downloading %s %s' % (pack.package, pack.version))
 
-    if not download_pkg(remote, local.localpath, pack):
+    if not waptpkg.download(remote, local.localpath, pack):
         print('Download / signature checks failure')
         return False
 
-    if not check_pkg_signature(pack):
+    if not waptpkg.check_signature(pack):
         print('Signature checks failure')
         return False
 

@@ -4,7 +4,7 @@ import os
 import waptpackage
 from waptcrypto import SSLCABundle
 
-def download_pkg(remote, path, pkg):
+def download(remote, path, pkg):
     """Downloads package"""
     if not pkg.package:
         return
@@ -17,7 +17,7 @@ def download_pkg(remote, path, pkg):
     if not path:
         return False
 
-def check_pkg_signature(pkg):
+def check_signature(pkg):
     if not os.path.exists('/etc/ssl/certs'):
         return True
 
