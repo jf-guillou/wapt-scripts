@@ -3,6 +3,7 @@
 
 from argparse import ArgumentParser
 import waptrepo
+import waptpkg
 
 def search_package(remotes, name, new_only):
     """Search for package name in remote repository"""
@@ -10,8 +11,10 @@ def search_package(remotes, name, new_only):
     packages = []
     for _, rep in remotes.items():
         packages.extend(rep['repo'].search(name, None, new_only))
+
     if not packages:
         return None
+
     return packages
 
 def pick_package(packages):
@@ -35,17 +38,14 @@ def pick_package(packages):
 
 def add_package(remote, local, pack):
     """Add remote package to local repository"""
-    if not pack.package:
-        return
     print('Downloading %s %s' % (pack.package, pack.version))
-    res = remote.download_packages(pack, local.localpath)
-    if res['errors']:
-        print('Download failure')
+
+    if not download_pkg(remote, local.localpath, pack):
+        print('Download / signature checks failure')
         return False
 
-    path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
-    if not path:
-        print('Package path not found')
+    if not check_pkg_signature(pack):
+        print('Signature checks failure')
         return False
 
     local.update_packages_index()
@@ -69,10 +69,12 @@ def run():
         if not packages:
             print('No results for %s' % package_name)
             continue
+
         pack = pick_package(packages)
         if not pack:
             print('Invalid choice, skipping %s' % package_name)
             continue
+
         add_package(remotes[pack['repo']]['repo'], local, pack)
 
 if __name__ == '__main__':

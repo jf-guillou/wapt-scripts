@@ -2,15 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import waptrepo
+import waptpkg
 
 def check_new_packages(local, remote):
     """Check remote repository for updates"""
     local_date = local.is_available()
     if not local_date:
         raise FileNotFoundError('Missing local Packages file')
+
     remote_date = remote.is_available()
     if not remote_date:
         raise FileNotFoundError('Missing remote Packages file')
+
     print('Local %s' % local_date)
     print('Remote %s' % remote_date)
     return local_date < remote_date
@@ -21,6 +24,7 @@ def get_newest(package_list, name):
     for pack in package_list:
         if pack.package == name and (not newest or pack > newest):
             newest = pack
+
     return newest
 
 def update_local(local, remote):
@@ -45,17 +49,14 @@ def update_local(local, remote):
 
 def add_package(remote, local, pack):
     """Add remote package to local repository"""
-    if not pack.package:
-        return
     print('Downloading %s %s' % (pack.package, pack.version))
-    res = remote.download_packages(pack, local.localpath)
-    if res['errors']:
+
+    if not download_pkg(remote, local.localpath, pack):
         print('Download failure')
         return False
 
-    path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
-    if not path:
-        print('Package path not found')
+    if not check_pkg_signature(pack):
+        print('Signature checks failure')
         return False
 
     print('Added %s to local repository' % pack.package)
@@ -73,6 +74,7 @@ def run():
             print('Done')
         else:
             print('Nothing to do')
+
     local.update_packages_index()
 
 if __name__ == '__main__':
