@@ -7,7 +7,7 @@ from waptcrypto import SSLCABundle
 def download(remote, path, pkg):
     """Downloads package"""
     if not pkg.package:
-        return
+        return False
 
     res = remote.download_packages(pkg, path)
     if res['errors']:
@@ -16,6 +16,8 @@ def download(remote, path, pkg):
     path = res['downloaded'] and res['downloaded'][0] or res['skipped'][0]
     if not path:
         return False
+
+    return True
 
 def check_signature(pkg):
     if not os.path.exists('/etc/ssl/certs'):

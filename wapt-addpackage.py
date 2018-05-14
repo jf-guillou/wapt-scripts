@@ -41,7 +41,7 @@ def add_package(remote, local, pack):
     print('Downloading %s %s' % (pack.package, pack.version))
 
     if not waptpkg.download(remote, local.localpath, pack):
-        print('Download / signature checks failure')
+        print('Download failure')
         return False
 
     if not waptpkg.check_signature(pack):
