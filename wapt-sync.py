@@ -56,6 +56,12 @@ def add_package(remote, local, pack):
         return False
 
     if not waptpkg.check_signature(pack):
+        print('Original signature checks failure')
+        return False
+
+    waptpkg.overwrite_signature(pack)
+
+    if not waptpkg.check_signature(pack):
         print('Signature checks failure')
         return False
 

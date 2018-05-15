@@ -2,7 +2,7 @@
 
 import os
 import waptpackage
-from waptcrypto import SSLCABundle
+from waptcrypto import SSLCABundle,SSLCertificate,SSLPrivateKey
 
 def download(remote, path, pkg):
     """Downloads package"""
@@ -20,6 +20,7 @@ def download(remote, path, pkg):
     return pkg_path
 
 def check_signature(pkg):
+    """Check package signature if /etc/ssl/certs exists"""
     if not os.path.exists('/etc/ssl/certs'):
         return True
 
@@ -27,3 +28,10 @@ def check_signature(pkg):
         return False
 
     return True
+
+def overwrite_signature(pkg):
+    """Overwrite imported package signature"""
+    crt = SSLCertificate('certs/import_cert.crt')
+    key = SSLPrivateKey('certs/import_cert.pem', password=os.environ.get('CERT_PASSWD', ''))
+    
+    return pkg.sign_package(crt, key)
