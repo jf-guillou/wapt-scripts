@@ -74,12 +74,13 @@ def run():
     parser = ArgumentParser()
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Silent')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
+    parser.add_argument('--force', dest='force', action='store_true', help='Force check remote repo')
     args = parser.parse_args()
 
     hdlr = logging.StreamHandler(sys.stdout)
     hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
     log.addHandler(hdlr)
-    
+
     if args.quiet:
         log.setLevel(logging.CRITICAL)
     elif args.verbose:
@@ -91,7 +92,7 @@ def run():
     remotes = waptrepo.get_remote_repos()
     for name, remote in remotes.items():
         log.info('Remote %s %s' % (name, remote['url']))
-        if check_new_packages(local, remote['repo']):
+        if check_new_packages(local, remote['repo']) or args.force:
             log.debug('Scan remote Packages for updates')
             update_local(local, remote['repo'])
             log.debug('Done')

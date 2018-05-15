@@ -72,7 +72,7 @@ def run():
     hdlr = logging.StreamHandler(sys.stdout)
     hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
     log.addHandler(hdlr)
-    
+
     if args.verbose:
         log.setLevel(logging.DEBUG)
     else:

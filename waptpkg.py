@@ -39,5 +39,5 @@ def overwrite_signature(pkg):
 
     crt = SSLCertificate(cert_file)
     key = SSLPrivateKey(key_file, password=password)
-    
+
     return pkg.sign_package(crt, key)
