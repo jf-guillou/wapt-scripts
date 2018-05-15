@@ -31,7 +31,13 @@ def check_signature(pkg):
 
 def overwrite_signature(pkg):
     """Overwrite imported package signature"""
-    crt = SSLCertificate('certs/import_cert.crt')
-    key = SSLPrivateKey('certs/import_cert.pem', password=os.environ.get('CERT_PASSWD', ''))
+    cert_file = os.environ.get('WAPT_CERT')
+    key_file = os.environ.get('WAPT_KEY')
+    password = os.environ.get('WAPT_PASSWD')
+    if not (cert_file and key_file and pwd):
+        return False
+
+    crt = SSLCertificate(cert_file)
+    key = SSLPrivateKey(key_file, password=password)
     
     return pkg.sign_package(crt, key)
