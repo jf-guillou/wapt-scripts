@@ -1,8 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from argparse import ArgumentParser
+import sys
+import logging
 import waptrepo
 import waptpkg
+
+log = logging.getLogger(__name__)
 
 def check_new_packages(local, remote):
     """Check remote repository for updates"""
@@ -14,8 +19,8 @@ def check_new_packages(local, remote):
     if not remote_date:
         raise FileNotFoundError('Missing remote Packages file')
 
-    print('Local %s' % local_date)
-    print('Remote %s' % remote_date)
+    log.debug('Local %s' % local_date)
+    log.debug('Remote %s' % remote_date)
     return local_date < remote_date
 
 def get_newest(package_list, name):
@@ -36,50 +41,66 @@ def update_local(local, remote):
         done.append(l_pack.package)
 
         l_pack = get_newest(local.packages, l_pack.package)
-        print('Checking %s %s' % (l_pack.package, l_pack.version))
+        log.debug('Checking %s %s' % (l_pack.package, l_pack.version))
 
         r_pack = get_newest(remote.packages, l_pack.package)
         if not r_pack:
             continue
 
-        print('Found %s %s' % (r_pack.package, r_pack.version))
+        log.debug('Found %s %s' % (r_pack.package, r_pack.version))
         if r_pack > l_pack:
-            print('Newer version %s %s - %s' % (l_pack.package, l_pack.version, r_pack.version))
+            log.debug('Newer version %s %s - %s' % (l_pack.package, l_pack.version, r_pack.version))
             add_package(remote, local, r_pack)
 
 def add_package(remote, local, pack):
     """Add remote package to local repository"""
-    print('Downloading %s %s' % (pack.package, pack.version))
+    log.info('Downloading %s %s' % (pack.package, pack.version))
 
     if not waptpkg.download(remote, local.localpath, pack):
-        print('Download failure')
+        log.error('Download failure')
         return False
 
     if not waptpkg.check_signature(pack):
-        print('Original signature checks failure')
+        log.error('Original signature checks failure')
         return False
 
     waptpkg.overwrite_signature(pack)
 
     if not waptpkg.check_signature(pack):
-        print('Signature checks failure')
+        log.error('Signature checks failure')
         return False
 
-    print('Added %s to local repository' % pack.package)
+    log.debug('Added %s to local repository' % pack.package)
     return True
 
 def run():
     """Loop through remote repositories and check for any package updates"""
+    parser = ArgumentParser()
+    parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Silent')
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
+    args = parser.parse_args()
+
+    hdlr = logging.StreamHandler(sys.stdout)
+    hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+    log.addHandler(hdlr)
+    
+    if args.quiet:
+        log.setLevel(logging.CRITICAL)
+    elif args.verbose:
+        log.setLevel(logging.DEBUG)
+    else:
+        log.setLevel(logging.INFO)
+
     local = waptrepo.get_local_repo()
     remotes = waptrepo.get_remote_repos()
     for name, remote in remotes.items():
-        print('Remote %s %s' % (name, remote['url']))
+        log.info('Remote %s %s' % (name, remote['url']))
         if check_new_packages(local, remote['repo']):
-            print('Scan remote Packages for updates')
+            log.debug('Scan remote Packages for updates')
             update_local(local, remote['repo'])
-            print('Done')
+            log.debug('Done')
         else:
-            print('Nothing to do')
+            log.info('Nothing to do')
 
     local.update_packages_index()
 

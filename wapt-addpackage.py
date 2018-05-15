@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
+import sys
+import logging
 import waptrepo
 import waptpkg
+
+log = logging.getLogger(__name__)
 
 def search_package(remotes, name, new_only):
     """Search for package name in remote repository"""
@@ -41,17 +45,17 @@ def add_package(remote, local, pack):
     print('Downloading %s %s' % (pack.package, pack.version))
 
     if not waptpkg.download(remote, local.localpath, pack):
-        print('Download failure')
+        log.error('Download failure')
         return False
 
     if not waptpkg.check_signature(pack):
-        print('Signature checks failure')
+        log.error('Signature checks failure')
         return False
 
     waptpkg.overwrite_signature(pack)
 
     local.update_packages_index()
-    print('Added %s to local repository' % pack.package)
+    log.debug('Added %s to local repository' % pack.package)
     return True
 
 def run():
@@ -59,10 +63,20 @@ def run():
     parser = ArgumentParser()
     parser.add_argument('name', metavar='name', nargs='+', help='Package name')
     parser.add_argument('-a', dest='allversions', action='store_true', help='Display all versions')
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
     args = parser.parse_args()
     if not args.name:
         parser.print_help()
         return
+
+    hdlr = logging.StreamHandler(sys.stdout)
+    hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+    log.addHandler(hdlr)
+    
+    if args.verbose:
+        log.setLevel(logging.DEBUG)
+    else:
+        log.setLevel(logging.INFO)
 
     remotes = waptrepo.get_remote_repos()
     local = waptrepo.get_local_repo()
