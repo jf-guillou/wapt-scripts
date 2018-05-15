@@ -34,7 +34,7 @@ def overwrite_signature(pkg):
     cert_file = os.environ.get('WAPT_CERT')
     key_file = os.environ.get('WAPT_KEY')
     password = os.environ.get('WAPT_PASSWD')
-    if not (cert_file and key_file and pwd):
+    if not (cert_file and key_file and password):
         return False
 
     crt = SSLCertificate(cert_file)

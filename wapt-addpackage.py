@@ -45,14 +45,10 @@ def add_package(remote, local, pack):
         return False
 
     if not waptpkg.check_signature(pack):
-        print('Original signature checks failure')
+        print('Signature checks failure')
         return False
 
     waptpkg.overwrite_signature(pack)
-
-    if not waptpkg.check_signature(pack):
-        print('Signature checks failure')
-        return False
 
     local.update_packages_index()
     print('Added %s to local repository' % pack.package)
