@@ -11,6 +11,7 @@ Exemples below assume default installation in `/opt/wapt`:
 Optional bash aliases:
 
     echo "alias wapt-addpackage='sudo -u wapt PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
+    echo "alias wapt-sync='sudo -u wapt PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
 
 ### wapt-addpackage.py
 
@@ -23,8 +24,8 @@ Differs from Import function by keeping package and overwriting signature, allow
 ### wapt-sync.py
 
 Synchronize local Packages repository with official remote repository.
-The main goal is to auto-update packages imported with wapt-addpackage.py.
+The main goal is to update packages imported with wapt-addpackage.py.
 
-Should be used in a daily cron task.
+Can also be used in a daily cron task, if you trust the remote repository.
 
-    echo "0 3 * * * wapt PYTHONPATH=/opt/wapt PYTHONHOME=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/wapt-scripts/wapt-sync.py" >> /etc/crontab
+    echo "0 3 * * * wapt PYTHONPATH=/opt/wapt PYTHONHOME=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/wapt-scripts/wapt-sync.py --quiet" >> /etc/crontab
