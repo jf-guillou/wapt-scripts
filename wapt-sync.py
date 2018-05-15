@@ -66,10 +66,6 @@ def add_package(remote, local, pack):
 
     waptpkg.overwrite_signature(pack)
 
-    if not waptpkg.check_signature(pack):
-        log.error('Signature checks failure')
-        return False
-
     log.debug('Added %s to local repository' % pack.package)
     return True
 
