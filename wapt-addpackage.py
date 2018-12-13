@@ -25,7 +25,7 @@ def pick_package(packages):
     """List matching packages and wait for user to pick one"""
     print('Matching packages:')
     for (i, pack) in enumerate(packages, start=1):
-        print('%s %s %s' % (i, pack.package, pack.version))
+        print('%s %s (arch:%s) %s' % (i, pack.package, pack.architecture, pack.version))
     idx_input = raw_input('Pick package: ')
     if not idx_input:
         return None
