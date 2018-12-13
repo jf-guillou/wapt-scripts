@@ -27,7 +27,7 @@ def get_latest_version(package_list, pkg_hash):
     """Iterate through package_list and return newest one"""
     newest = None
     for pkg in package_list:
-        if waptpackage.hash(pkg) == pkg_hash and (not newest or pkg > newest):
+        if waptpkg.hash(pkg) == pkg_hash and (not newest or pkg > newest):
             newest = pkg
 
     return newest
@@ -37,7 +37,7 @@ def update_local(local, remote, dryrun):
     done = []
     local_packages = local.packages()
     remote_packages = remote.packages()
-    
+
     # Iterate all local packages
     for local_pkg in local_packages:
         local_pkg_hash = waptpkg.hash(local_pkg)
