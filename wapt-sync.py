@@ -32,7 +32,7 @@ def get_newest(package_list, name):
 
     return newest
 
-def update_local(local, remote):
+def update_local(local, remote, dryrun):
     """Iterate through local packages and updates them if necessary"""
     done = []
     local_packages = local.packages()
@@ -53,7 +53,8 @@ def update_local(local, remote):
         log.debug('Found %s %s' % (r_pack.package, r_pack.version))
         if r_pack > l_pack:
             log.debug('Newer version %s %s - %s' % (l_pack.package, l_pack.version, r_pack.version))
-            add_package(remote, local, r_pack)
+            if not dryrun:
+                add_package(remote, local, r_pack)
 
 def add_package(remote, local, pack):
     """Add remote package to local repository"""
@@ -77,6 +78,7 @@ def run():
     parser = ArgumentParser()
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Silent')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
+    parser.add_argument('--dryrun', dest='dryrun', action='store_true', help='Do not download, only check for updates')
     parser.add_argument('--force', dest='force', action='store_true', help='Force check remote repo')
     args = parser.parse_args()
 
@@ -97,7 +99,7 @@ def run():
         log.info('Remote %s %s' % (name, remote['url']))
         if check_new_packages(local, remote['repo']) or args.force:
             log.debug('Scan remote Packages for updates')
-            update_local(local, remote['repo'])
+            update_local(local, remote['repo'], args.dryrun)
             log.debug('Done')
         else:
             log.info('Nothing to do')
