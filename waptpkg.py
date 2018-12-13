@@ -41,3 +41,8 @@ def overwrite_signature(pkg):
     key = SSLPrivateKey(key_file, password=password)
 
     return pkg.sign_package(crt, key)
+
+def hash(pkg):
+    """Creates a hash based on package properties"""
+
+    return "%s:%s" % (pkg.package, pkg.architecture)

@@ -23,12 +23,12 @@ def check_new_packages(local, remote):
     log.debug('Remote %s' % remote_date)
     return local_date < remote_date
 
-def get_newest(package_list, name):
+def get_latest_version(package_list, pkg_hash):
     """Iterate through package_list and return newest one"""
     newest = None
-    for pack in package_list:
-        if pack.package == name and (not newest or pack > newest):
-            newest = pack
+    for pkg in package_list:
+        if waptpackage.hash(pkg) == pkg_hash and (not newest or pkg > newest):
+            newest = pkg
 
     return newest
 
@@ -38,39 +38,41 @@ def update_local(local, remote, dryrun):
     local_packages = local.packages()
     remote_packages = remote.packages()
     
-    for l_pack in local_packages:
-        if done.count(l_pack.package):
+    # Iterate all local packages
+    for local_pkg in local_packages:
+        local_pkg_hash = waptpkg.hash(local_pkg)
+        if local_pkg_hash in done:
             continue
-        done.append(l_pack.package)
+        done.append(local_pkg_hash)
 
-        l_pack = get_newest(local_packages, l_pack.package)
-        log.debug('Checking %s %s' % (l_pack.package, l_pack.version))
+        local_pkg = get_latest_version(local_packages, local_pkg_hash)
+        log.debug('Checking %s %s' % (local_pkg.package, local_pkg.version))
 
-        r_pack = get_newest(remote_packages, l_pack.package)
-        if not r_pack:
+        remote_pkg = get_latest_version(remote_packages, local_pkg_hash)
+        if not remote_pkg:
             continue
 
-        log.debug('Found %s %s' % (r_pack.package, r_pack.version))
-        if r_pack > l_pack:
-            log.debug('Newer version %s %s - %s' % (l_pack.package, l_pack.version, r_pack.version))
+        log.debug('Found %s %s' % (remote_pkg.package, remote_pkg.version))
+        if remote_pkg > local_pkg:
+            log.debug('Newer version %s %s - %s' % (local_pkg.package, local_pkg.version, remote_pkg.version))
             if not dryrun:
-                add_package(remote, local, r_pack)
+                add_package(remote, local, remote_pkg)
 
-def add_package(remote, local, pack):
+def add_package(remote, local, pkg):
     """Add remote package to local repository"""
-    log.info('Downloading %s %s' % (pack.package, pack.version))
+    log.info('Downloading %s %s' % (pkg.package, pkg.version))
 
-    if not waptpkg.download(remote, local.localpath, pack):
+    if not waptpkg.download(remote, local.localpath, pkg):
         log.error('Download failure')
         return False
 
-    if not waptpkg.check_signature(pack):
+    if not waptpkg.check_signature(pkg):
         log.error('Original signature checks failure')
         return False
 
-    waptpkg.overwrite_signature(pack)
+    waptpkg.overwrite_signature(pkg)
 
-    log.debug('Added %s to local repository' % pack.package)
+    log.debug('Added %s to local repository' % pkg.package)
     return True
 
 def run():
