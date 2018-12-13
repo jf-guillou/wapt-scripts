@@ -35,15 +35,18 @@ def get_newest(package_list, name):
 def update_local(local, remote):
     """Iterate through local packages and updates them if necessary"""
     done = []
-    for l_pack in local.packages:
+    local_packages = local.packages()
+    remote_packages = remote.packages()
+    
+    for l_pack in local_packages:
         if done.count(l_pack.package):
             continue
         done.append(l_pack.package)
 
-        l_pack = get_newest(local.packages, l_pack.package)
+        l_pack = get_newest(local_packages, l_pack.package)
         log.debug('Checking %s %s' % (l_pack.package, l_pack.version))
 
-        r_pack = get_newest(remote.packages, l_pack.package)
+        r_pack = get_newest(remote_packages, l_pack.package)
         if not r_pack:
             continue
 
