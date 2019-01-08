@@ -46,7 +46,7 @@ def update_local(local, remote, dryrun):
         done.append(local_pkg_hash)
 
         local_pkg = get_latest_version(local_packages, local_pkg_hash)
-        log.debug('Checking %s %s' % (local_pkg.package, local_pkg.version))
+        log.debug('Checking %s (%s) @ %s' % (local_pkg.package, local_pkg_hash, local_pkg.version))
 
         remote_pkg = get_latest_version(remote_packages, local_pkg_hash)
         if not remote_pkg:
@@ -54,7 +54,7 @@ def update_local(local, remote, dryrun):
 
         log.debug('Found %s %s' % (remote_pkg.package, remote_pkg.version))
         if remote_pkg > local_pkg:
-            log.debug('Newer version %s %s - %s' % (local_pkg.package, local_pkg.version, remote_pkg.version))
+            log.debug('Newer version %s (%s) @ %s -> %s' % (local_pkg.package, local_pkg_hash, local_pkg.version, remote_pkg.version))
             if not dryrun:
                 add_package(remote, local, remote_pkg)
 
