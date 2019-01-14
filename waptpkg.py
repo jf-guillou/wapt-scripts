@@ -45,4 +45,4 @@ def overwrite_signature(pkg):
 def hash(pkg):
     """Creates a hash based on package properties"""
 
-    return "%s:%s" % (pkg.package, pkg.architecture)
+    return "%s:%s:%s" % (pkg.package, pkg.architecture, pkg.locale)
