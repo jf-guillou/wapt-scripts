@@ -12,8 +12,8 @@ Exemples below assume default installation in `/opt/wapt`:
 
 Optional bash aliases:
 
-    echo "alias wapt-addpackage='WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
-    echo "alias wapt-sync='WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
+    echo "alias wapt-addpackage='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
+    echo "alias wapt-sync='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
 
 ## Configuration
 
@@ -41,7 +41,7 @@ Search in known repositories ([TIS](https://store.wapt.fr/)/[SMP](https://wapt.l
 
 Differs from Import function by keeping package and overwriting signature, allowing automatic updates from remote repository.
 
-    WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-addpackage.py vlc
+    PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python  /opt/wapt/wapt-scripts/wapt-addpackage.py vlc
 
 #### wapt-addpackage.py arguments
 
@@ -68,7 +68,7 @@ The main goal is to update packages imported with wapt-addpackage.py.
 
 Can also be used in a daily cron task, if you trust the remote repository.
 
-    echo "0 3 * * * root WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-sync.py --quiet" >> /etc/crontab
+    echo "0 3 * * * root PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-sync.py --quiet" >> /etc/crontab
 
 #### wapt-sync.py rguments
 
