@@ -52,7 +52,11 @@ def add_package(remote, local, pack, nocheckcert):
         log.error('Signature checks failure')
         return False
 
-    waptpkg.overwrite_signature(pack)
+    signature = waptpkg.overwrite_signature(pack)
+    if signature:
+        log.debug('Signature overwrite : %s' % signature)
+    else:
+        log.debug('Package signature untouched')
 
     local.update_packages_index()
     log.debug('Added %s to local repository' % pack.package)
