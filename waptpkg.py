@@ -40,7 +40,7 @@ def overwrite_signature(pkg):
     crt = SSLCertificate(cert_file)
     key = SSLPrivateKey(key_file, password=password)
 
-    return pkg.sign_package(sign_package=crt, private_key=key)
+    return pkg.sign_package(certificate=crt, private_key=key)
 
 def hash(pkg):
     """Creates a hash based on package properties"""
