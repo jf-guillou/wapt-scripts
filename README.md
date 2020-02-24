@@ -15,6 +15,26 @@ Optional bash aliases:
     echo "alias wapt-addpackage='WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
     echo "alias wapt-sync='WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
 
+## Configuration
+
+Various environments variables are available :
+
+### WAPT_PATH
+
+Optional, points to wapt Packages location, defaults to /var/www/wapt
+
+### WAPT_CERT
+
+Optional, points to certificate file used to re-sign imported packages
+
+### WAPT_KEY
+
+Optional, points to certificate key file used to re-sign imported packages
+
+### WAPT_PASSWD
+
+Optional, password used to decrypt WAPT_KEY certificate key
+
 ### wapt-addpackage.py
 
 Search in known repositories ([TIS](https://store.wapt.fr/)/[SMP](https://wapt.lesfourmisduweb.org/tous-les-packages)) for packages, pick best match and copy it in local repository.

@@ -10,7 +10,7 @@ REPOS = {
 
 def get_local_repo():
     """Get local package repository and load index"""
-    repo = waptpackage.WaptLocalRepo()
+    repo = waptpackage.WaptLocalRepo(os.environ.get('WAPT_PATH') or '/var/www/wapt')
     repo.update()
 
     return repo
