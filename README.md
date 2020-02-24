@@ -2,7 +2,7 @@
 
 Collection of scripts used with wapt server
 
-These scripts are compatible with WAPT 1.5-1.7 and should be ran using the waptpython executable.
+These scripts are compatible with WAPT 1.5-1.8 and should be ran using the waptpython executable.
 
 ## Installation
 
@@ -12,8 +12,8 @@ Exemples below assume default installation in `/opt/wapt`:
 
 Optional bash aliases:
 
-    echo "alias wapt-addpackage='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
-    echo "alias wapt-sync='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
+    echo "alias wapt-addpackage='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-scripts/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-addpackage.py'" >> ~/.bash_aliases
+    echo "alias wapt-sync='PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-scripts/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python /opt/wapt/wapt-scripts/wapt-sync.py'" >> ~/.bash_aliases
 
 ## Configuration
 
@@ -41,7 +41,7 @@ Search in known repositories ([TIS](https://store.wapt.fr/)/[SMP](https://wapt.l
 
 Differs from Import function by keeping package and overwriting signature, allowing automatic updates from remote repository.
 
-    PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python  /opt/wapt/wapt-scripts/wapt-addpackage.py vlc
+    PYTHONHOME=/opt/wapt PYTHONPATH=/opt/wapt WAPT_CERT=/opt/wapt/wapt-scripts/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password /opt/wapt/bin/python  /opt/wapt/wapt-scripts/wapt-addpackage.py vlc
 
 #### wapt-addpackage.py arguments
 
