@@ -40,7 +40,7 @@ def pick_package(packages):
 
     return list(packages)[idx-1]
 
-def add_package(remote, local, pack):
+def add_package(remote, local, pack, nocheckcert):
     """Add remote package to local repository"""
     print('Downloading %s %s' % (pack.package, pack.version))
 
@@ -48,7 +48,7 @@ def add_package(remote, local, pack):
         log.error('Download failure')
         return False
 
-    if not waptpkg.check_signature(pack):
+    if not nocheckcert and not waptpkg.check_signature(pack):
         log.error('Signature checks failure')
         return False
 
@@ -62,7 +62,8 @@ def run():
     """Parse arguments, fetch a list a matching packages from remote repo and install if picked"""
     parser = ArgumentParser()
     parser.add_argument('name', metavar='name', nargs='+', help='Package name')
-    parser.add_argument('-a', dest='allversions', action='store_true', help='Display all versions')
+    parser.add_argument('-a', '--allversions', dest='allversions', action='store_true', help='Display all versions')
+    parser.add_argument('--nocheckcert', dest='nocheckcert', action='store_true', help='Do not check remote certificates - This may be dangerous')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
     args = parser.parse_args()
     if not args.name:
@@ -91,7 +92,7 @@ def run():
             print('Invalid choice, skipping %s' % package_name)
             continue
 
-        add_package(remotes[pack['repo']]['repo'], local, pack)
+        add_package(remotes[pack['repo']]['repo'], local, pack, args.nocheckcert)
 
 if __name__ == '__main__':
     run()

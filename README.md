@@ -43,6 +43,24 @@ Differs from Import function by keeping package and overwriting signature, allow
 
     WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-addpackage.py vlc
 
+#### wapt-addpackage.py arguments
+
+* name
+
+Mandatory, package name to search for
+
+* --allversions
+
+Display all packages versions
+
+* --nocheckcert
+
+Do not check for remote certificate validity when importing, caution this may be dangerous
+
+* --verbose
+
+Log everything (including debug)
+
 ### wapt-sync.py
 
 Synchronize local Packages repository with official remote repository.
@@ -51,3 +69,25 @@ The main goal is to update packages imported with wapt-addpackage.py.
 Can also be used in a daily cron task, if you trust the remote repository.
 
     echo "0 3 * * * root WAPT_CERT=/opt/wapt/wapt-script/certs/wapt.crt WAPT_KEY=/opt/wapt/wapt-scripts/certs/key.pem WAPT_PASSWD=key_password waptpython /opt/wapt/wapt-scripts/wapt-sync.py --quiet" >> /etc/crontab
+
+#### wapt-sync.py rguments
+
+* --dryrun
+
+Do not actually do anything, just output expected changes to STDOUT
+
+* --nocheckcert
+
+Do not check for remote certificate validity when importing, caution this may be dangerous
+
+* --force
+
+Ignore cache cache and always try to fetch new packages if possible
+
+* --quiet
+
+Log only errors and warnings
+
+* --verbose
+
+Log everything (including debug)

@@ -32,7 +32,7 @@ def get_latest_version(package_list, pkg_hash):
 
     return newest
 
-def update_local(local, remote, dryrun):
+def update_local(local, remote, dryrun, nocheckcert):
     """Iterate through local packages and updates them if necessary"""
     done = []
     local_packages = local.packages()
@@ -56,9 +56,9 @@ def update_local(local, remote, dryrun):
         if remote_pkg > local_pkg:
             log.debug('Newer version %s (%s) @ %s -> %s' % (local_pkg.package, local_pkg_hash, local_pkg.version, remote_pkg.version))
             if not dryrun:
-                add_package(remote, local, remote_pkg)
+                add_package(remote, local, remote_pkg, nocheckcert)
 
-def add_package(remote, local, pkg):
+def add_package(remote, local, pkg, nocheckcert):
     """Add remote package to local repository"""
     log.info('Downloading %s %s' % (pkg.package, pkg.version))
 
@@ -66,7 +66,7 @@ def add_package(remote, local, pkg):
         log.error('Download failure')
         return False
 
-    if not waptpkg.check_signature(pkg):
+    if not nocheckcert and not waptpkg.check_signature(pkg):
         log.error('Original signature checks failure')
         return False
 
@@ -81,6 +81,7 @@ def run():
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Silent')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose')
     parser.add_argument('--dryrun', dest='dryrun', action='store_true', help='Do not download, only check for updates')
+    parser.add_argument('--nocheckcert', dest='nocheckcert', action='store_true', help='Do not check remote certificates - This may be dangerous')
     parser.add_argument('--force', dest='force', action='store_true', help='Force check remote repo')
     args = parser.parse_args()
 
@@ -101,7 +102,7 @@ def run():
         log.info('Remote %s %s' % (name, remote['url']))
         if check_new_packages(local, remote['repo']) or args.force:
             log.debug('Scan remote Packages for updates')
-            update_local(local, remote['repo'], args.dryrun)
+            update_local(local, remote['repo'], args.dryrun, args.nocheckcert)
             log.debug('Done')
         else:
             log.info('Nothing to do')
