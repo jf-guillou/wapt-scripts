@@ -1,9 +1,11 @@
 # wapt-scripts
+
 Collection of scripts used with wapt server
 
 These scripts are compatible with WAPT 1.5-1.7 and should be ran using the waptpython executable.
 
 ## Installation
+
 Exemples below assume default installation in `/opt/wapt`:
 
     cd /opt/wapt && git clone https://github.com/jf-guillou/wapt-scripts.git
