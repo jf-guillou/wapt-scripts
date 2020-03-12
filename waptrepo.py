@@ -5,7 +5,7 @@ import os
 
 REPOS = {
     'tis': {'url': 'https://wapt.tranquil.it/wapt', 'repo': None},
-    'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
+#    'smp': {'url': 'https://wapt.lesfourmisduweb.org/wapt', 'repo': None}
 }
 
 def get_local_repo():

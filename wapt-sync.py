@@ -72,7 +72,9 @@ def add_package(remote, local, pkg, nocheckcert):
 
     signature = waptpkg.overwrite_signature(pkg)
     if signature:
-        log.debug('Signature overwrite : %s' % signature)
+        log.debug('Signature overwrite : %s ' % pkg.filename)
+        filename = waptpkg.recalc_md5(pkg)
+        log.debug('New filename : %s' % filename)
     else:
         log.debug('Package signature untouched')
 

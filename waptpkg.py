@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import waptpackage
 from waptcrypto import SSLCABundle,SSLCertificate,SSLPrivateKey
 
@@ -41,6 +42,19 @@ def overwrite_signature(pkg):
     key = SSLPrivateKey(key_file, password=password)
 
     return pkg.sign_package(certificate=crt, private_key=key)
+
+def recalc_md5(pkg):
+    """Recalc MD5 sum in filename after changes in package contents"""
+    pkg.md5sum = waptpackage.md5_for_file(pkg.localpath)
+
+    filename = pkg.make_package_filename()
+    if filename != pkg.filename:
+        new_localpath = os.path.join(os.path.dirname(os.path.abspath(pkg.localpath)), filename)
+        shutil.move(pkg.localpath, new_localpath)
+        pkg.localpath = new_localpath
+        pkg.load_control_from_wapt()
+
+    return pkg.filename
 
 def hash(pkg):
     """Creates a hash based on package properties"""
