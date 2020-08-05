@@ -41,6 +41,14 @@ def overwrite_signature(pkg):
     crt = SSLCertificate(cert_file)
     key = SSLPrivateKey(key_file, password=password)
 
+    # Force unzip and rebuild to ensure filelist integrity
+    pkg.unzip_package()
+    previous_localpath = pkg.localpath
+    pkg.localpath = None
+    pkg.build_package(target_directory=os.path.dirname(previous_localpath))
+    shutil.rmtree(pkg.sourcespath)
+    pkg.sourcespath = None
+
     return pkg.sign_package(certificate=crt, private_key=key)
 
 def recalc_md5(pkg):
