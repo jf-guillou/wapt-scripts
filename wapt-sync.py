@@ -35,7 +35,7 @@ def get_latest_version(package_list, pkg_hash):
 def update_local(local, remote, dryrun, nocheckcert):
     """Iterate through local packages and updates them if necessary"""
     done = []
-    local_packages = local.packages()
+    local_packages = sorted(local.packages())
     remote_packages = remote.packages()
 
     # Iterate all local packages
