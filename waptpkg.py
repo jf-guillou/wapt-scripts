@@ -30,6 +30,14 @@ def check_signature(pkg):
 
     return True
 
+def unpack(pkg):
+    """Unzip package"""
+    pkg.unzip_package()
+    path = pkg.localpath
+    pkg.localpath = None
+
+    return path
+
 def overwrite_signature(pkg):
     """Overwrite imported package signature"""
     cert_file = os.environ.get('WAPT_CERT')
@@ -42,14 +50,16 @@ def overwrite_signature(pkg):
     key = SSLPrivateKey(key_file, password=password)
 
     # Force unzip and rebuild to ensure filelist integrity
-    pkg.unzip_package()
-    previous_localpath = pkg.localpath
-    pkg.localpath = None
-    pkg.build_package(target_directory=os.path.dirname(previous_localpath))
-    shutil.rmtree(pkg.sourcespath)
-    pkg.sourcespath = None
+    previous_localpath = unpack(pkg)
+    repack(pkg, previous_localpath)
 
     return pkg.sign_package(certificate=crt, private_key=key)
+
+def repack(pkg, path):
+    """Re-zip package"""
+    pkg.build_package(target_directory=os.path.dirname(path))
+    shutil.rmtree(pkg.sourcespath)
+    pkg.sourcespath = None
 
 def recalc_md5(pkg):
     """Recalc MD5 sum in filename after changes in package contents"""
