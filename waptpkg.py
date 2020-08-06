@@ -67,4 +67,4 @@ def recalc_md5(pkg):
 def hash(pkg):
     """Creates a hash based on package properties"""
 
-    return "%s:%s:%s" % (pkg.package, pkg.architecture, pkg.locale)
+    return "%s:%s:%s:%s" % (pkg.package, pkg.target_os, pkg.architecture, pkg.locale)

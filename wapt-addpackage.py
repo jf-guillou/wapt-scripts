@@ -25,7 +25,7 @@ def pick_package(packages):
     """List matching packages and wait for user to pick one"""
     print('Matching packages:')
     for (i, pack) in enumerate(packages, start=1):
-        print('%s %s (arch:%s|locale:%s) %s' % (i, pack.package, pack.architecture, pack.locale, pack.version))
+        print('%s %s (os:%s|arch:%s|locale:%s) %s' % (i, pack.package, pack.target_os, pack.architecture, pack.locale, pack.version))
     idx_input = raw_input('Pick package: ')
     if not idx_input:
         return None
